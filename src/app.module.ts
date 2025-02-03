@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { envs } from './config/envs';
 import { ProductModule } from './product/product.module';
-import { CategoryModule } from './category/category.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 
@@ -22,7 +21,6 @@ import { UserModule } from './user/user.module';
       }),
     }),
     ProductModule,
-    CategoryModule,
     AuthModule,
     UserModule,
   ],
