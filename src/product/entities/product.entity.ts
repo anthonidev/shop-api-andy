@@ -4,74 +4,100 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  BeforeInsert,
+  BeforeUpdate,
+  Index,
 } from 'typeorm';
+import { IsNumber, IsPositive, IsString, MinLength } from 'class-validator';
+import { Category } from './category.entity';
+import { Brand } from './brand.entity';
 
-@Entity({ name: 'producto' })
+@Entity({ name: 'productos' })
+@Index(['name', 'brandId'], { unique: true })
 export class Product {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: false,
+  })
+  @IsString()
+  @MinLength(3)
   name: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: false,
+  })
+  @IsNumber()
+  @IsPositive()
   price: number;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 500,
+    nullable: true,
+    default: null,
+  })
   photo: string | null;
+
+  @Column({ type: 'int', nullable: true, name: 'category_id' })
+  categoryId: number;
 
   @ManyToOne(() => Category, (category) => category.products, {
     nullable: true,
+    onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'category_id' })
-  category: Category | null;
+  category: Category;
 
-  @ManyToOne(() => Brand, (brand) => brand.products, { nullable: true })
+  @Column({ type: 'int', nullable: true, name: 'brand_id' })
+  brandId: number;
+
+  @ManyToOne(() => Brand, (brand) => brand.products, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'brand_id' })
-  brand: Brand | null;
+  brand: Brand;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  @Column({
+    type: 'boolean',
+    default: true,
+  })
+  isActive: boolean;
+
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
+  stock: number;
+
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+  })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp',
+  })
   updatedAt: Date;
-}
 
-@Entity({ name: 'categoria' })
-export class Category {
-  @PrimaryGeneratedColumn('increment')
-  id: number;
-
-  @Column({ type: 'varchar', length: 255 })
-  name: string;
-
-  @OneToMany(() => Product, (product) => product.category)
-  products: Product[];
-
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
-  updatedAt: Date;
-}
-
-@Entity({ name: 'marca' })
-export class Brand {
-  @PrimaryGeneratedColumn('increment')
-  id: number;
-
-  @Column({ type: 'varchar', length: 255 })
-  name: string;
-
-  @OneToMany(() => Product, (product) => product.brand)
-  products: Product[];
-
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
-  updatedAt: Date;
+  @BeforeInsert()
+  @BeforeUpdate()
+  async validate() {
+    if (this.price < 0) throw new Error('El precio no puede ser negativo');
+    if (this.stock < 0) throw new Error('El stock no puede ser negativo');
+    this.name = this.name.toLowerCase().trim();
+  }
 }

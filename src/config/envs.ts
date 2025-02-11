@@ -1,6 +1,6 @@
 import * as joi from 'joi';
-// import * as dotenv from 'dotenv';
-// dotenv.config();
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 interface Envvars {
   DB_HOST: string;
@@ -8,6 +8,8 @@ interface Envvars {
   DB_NAME: string;
   DB_USERNAME: string;
   DB_PASSWORD: string;
+  JWT_SECRET: string;
+  JWT_REFRESH_SECRET: string;
   PORT: number;
 }
 
@@ -19,15 +21,17 @@ const envVarsSchema = joi
     DB_NAME: joi.string().required(),
     DB_USERNAME: joi.string().required(),
     DB_PASSWORD: joi.string().required(),
+    JWT_SECRET: joi.string().required(),
+    JWT_REFRESH_SECRET: joi.string().required(),
   })
   .unknown(true);
 
 const { error, value } = envVarsSchema.validate({
   ...process.env,
-  NATS_SERVERS: process.env.NATS_SERVERS?.split(','),
 });
 
 if (error) {
+  console.log(error);
   throw new Error(`Config validation error: ${error.message}`);
 }
 
@@ -40,4 +44,6 @@ export const envs = {
   dbUsername: envVars.DB_USERNAME,
   dbPassword: envVars.DB_PASSWORD,
   port: envVars.PORT,
+  jwtSecret: envVars.JWT_SECRET,
+  jwtRefreshSecret: envVars.JWT_REFRESH_SECRET,
 };
