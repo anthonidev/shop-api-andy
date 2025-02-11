@@ -27,13 +27,6 @@ export class Brand {
   name: string;
 
   @Column({
-    type: 'varchar',
-    length: 500,
-    nullable: true,
-  })
-  logo: string;
-
-  @Column({
     type: 'text',
     nullable: true,
   })

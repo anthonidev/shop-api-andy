@@ -11,6 +11,9 @@ interface Envvars {
   JWT_SECRET: string;
   JWT_REFRESH_SECRET: string;
   PORT: number;
+  CLOUDINARY_CLOUD_NAME: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
 }
 
 const envVarsSchema = joi
@@ -23,6 +26,9 @@ const envVarsSchema = joi
     DB_PASSWORD: joi.string().required(),
     JWT_SECRET: joi.string().required(),
     JWT_REFRESH_SECRET: joi.string().required(),
+    CLOUDINARY_CLOUD_NAME: joi.string().required(),
+    CLOUDINARY_API_KEY: joi.string().required(),
+    CLOUDINARY_API_SECRET: joi.string().required(),
   })
   .unknown(true);
 
@@ -46,4 +52,7 @@ export const envs = {
   port: envVars.PORT,
   jwtSecret: envVars.JWT_SECRET,
   jwtRefreshSecret: envVars.JWT_REFRESH_SECRET,
+  cloudinaryCloudName: envVars.CLOUDINARY_CLOUD_NAME,
+  cloudinaryApiKey: envVars.CLOUDINARY_API_KEY,
+  cloudinaryApiSecret: envVars.CLOUDINARY_API_SECRET,
 };

@@ -73,14 +73,6 @@ export class Product {
   })
   isActive: boolean;
 
-  @Column({
-    type: 'decimal',
-    precision: 10,
-    scale: 2,
-    nullable: true,
-  })
-  stock: number;
-
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp',
@@ -97,7 +89,6 @@ export class Product {
   @BeforeUpdate()
   async validate() {
     if (this.price < 0) throw new Error('El precio no puede ser negativo');
-    if (this.stock < 0) throw new Error('El stock no puede ser negativo');
     this.name = this.name.toLowerCase().trim();
   }
 }
