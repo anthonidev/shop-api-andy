@@ -1,4 +1,5 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsOptional, IsString } from 'class-validator';
 
 export class FilterProductDto {
   @IsOptional()
@@ -6,22 +7,22 @@ export class FilterProductDto {
   name?: string;
 
   @IsOptional()
-  @IsNumber()
+  @Type(() => Number)
   categoryId?: number;
 
   @IsOptional()
-  @IsNumber()
+  @Type(() => Number)
   brandId?: number;
 
   @IsOptional()
-  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
   isActive?: boolean;
 
   @IsOptional()
-  @IsNumber()
+  @Type(() => Number)
   minPrice?: number;
 
   @IsOptional()
-  @IsNumber()
+  @Type(() => Number)
   maxPrice?: number;
 }

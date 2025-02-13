@@ -20,6 +20,15 @@ export class BrandService {
   }
 
   async create(createBrandDto: CreateBrandDto) {
+    const brandExists = await this.brandRepository.findOne({
+      where: { name: createBrandDto.name },
+    });
+
+    if (brandExists) {
+      throw new NotFoundException(
+        `La marca con el nombre ${createBrandDto.name} ya existe`,
+      );
+    }
     const brand = this.brandRepository.create(createBrandDto);
     return await this.brandRepository.save(brand);
   }

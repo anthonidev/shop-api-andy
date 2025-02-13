@@ -6,9 +6,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
@@ -23,13 +21,11 @@ export class BrandController {
   }
 
   @Post()
-  @UseInterceptors(FileInterceptor('logo'))
   create(@Body() createBrandDto: CreateBrandDto) {
     return this.brandService.create(createBrandDto);
   }
 
   @Put(':id')
-  @UseInterceptors(FileInterceptor('logo'))
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateBrandDto: UpdateBrandDto,

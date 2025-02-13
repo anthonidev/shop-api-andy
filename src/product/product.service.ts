@@ -1,12 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { Not, Repository } from 'typeorm';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FilterProductDto } from './dto/filter-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductService {
@@ -16,14 +20,30 @@ export class ProductService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  async create(createProductDto: CreateProductDto, file: Express.Multer.File) {
-    // Subir imagen a Cloudinary
-    const uploadResult = await this.cloudinaryService.uploadImage(file);
+  async create(createProductDto: CreateProductDto, file?: Express.Multer.File) {
+    // Verificar si el producto ya existe
+    const productExists = await this.productRepository.findOne({
+      where: { name: createProductDto.name },
+    });
 
-    // Crear el producto con la URL de la imagen
+    if (productExists) {
+      throw new ConflictException(
+        `El producto con el nombre ${createProductDto.name} ya existe`,
+      );
+    }
+
+    let photoUrl: string | undefined;
+
+    // Solo subir la imagen si se proporcionó un archivo
+    if (file) {
+      const uploadResult = await this.cloudinaryService.uploadImage(file);
+      photoUrl = uploadResult.url;
+    }
+
+    // Crear el producto con o sin foto
     const product = this.productRepository.create({
       ...createProductDto,
-      photo: uploadResult.url,
+      photo: photoUrl, // será undefined si no se subió archivo
     });
 
     return await this.productRepository.save(product);
@@ -41,6 +61,8 @@ export class ProductService {
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.category', 'category')
       .leftJoinAndSelect('product.brand', 'brand')
+      .orderBy('product.updatedAt', 'DESC')
+      .addOrderBy('product.createdAt', 'DESC')
       .take(limit)
       .skip(offset);
 
@@ -100,12 +122,23 @@ export class ProductService {
       throw new NotFoundException(`Product with id ${id} not found`);
     }
 
-    // Si hay una nueva imagen
+    if (updateProductDto.name) {
+      const existingProduct = await this.productRepository.findOne({
+        where: {
+          name: updateProductDto.name.toLowerCase().trim(),
+          id: Not(id),
+        },
+      });
+
+      if (existingProduct) {
+        throw new ConflictException(
+          `Producto con el nombre ${updateProductDto.name} ya existe`,
+        );
+      }
+    }
     if (file) {
-      // Subir la nueva imagen
       const uploadResult = await this.cloudinaryService.uploadImage(file);
 
-      // Si el producto ya tenía una imagen, intentar eliminarla
       if (product.photo) {
         try {
           // Extraer el public_id de la URL antigua
@@ -115,19 +148,17 @@ export class ProductService {
           }
         } catch (error) {
           console.error('Error deleting old image:', error);
-          // Continuamos con la actualización aunque falle el borrado
         }
       }
 
-      // Actualizar la URL de la imagen
       updateProductDto.photo = uploadResult.url;
     }
 
-    // Actualizar el producto
     const updatedProduct = this.productRepository.merge(
       product,
       updateProductDto,
     );
+
     return await this.productRepository.save(updatedProduct);
   }
   async remove(id: number) {

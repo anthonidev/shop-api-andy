@@ -1,11 +1,9 @@
-import { IsString, IsOptional, MinLength } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsString } from 'class-validator';
 
 export class CreateBrandDto {
   @IsString()
-  @MinLength(2)
+  @Transform(({ value }) => value.toLowerCase().trim())
+  @Type(() => String)
   name: string;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
 }

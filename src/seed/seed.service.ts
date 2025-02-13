@@ -1,11 +1,11 @@
 // src/seed/seed.service.ts
+import { faker } from '@faker-js/faker';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { faker } from '@faker-js/faker';
 import { Brand } from 'src/product/entities/brand.entity';
 import { Category } from 'src/product/entities/category.entity';
 import { Product } from 'src/product/entities/product.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class SeedService {
@@ -40,34 +40,32 @@ export class SeedService {
 
   private async createBrands() {
     const brandsData = [
-      { name: 'nike', description: 'Marca deportiva líder mundial' },
-      { name: 'adidas', description: 'Innovación en ropa deportiva' },
-      { name: 'puma', description: 'Estilo deportivo y urbano' },
-      { name: 'reebok', description: 'Equipamiento deportivo de calidad' },
-      { name: 'under armour', description: 'Tecnología en ropa deportiva' },
-      { name: 'new balance', description: 'Calzado deportivo especializado' },
-      { name: 'asics', description: 'Tecnología para running' },
-      { name: 'fila', description: 'Moda deportiva clásica' },
-      { name: 'converse', description: 'Calzado urbano icónico' },
-      { name: 'vans', description: 'Estilo skater y urbano' },
-      { name: 'skechers', description: 'Comfort en calzado' },
-      { name: 'timberland', description: 'Calzado outdoor' },
-      { name: 'dc shoes', description: 'Calzado para skateboarding' },
-      { name: 'brooks', description: 'Especialistas en running' },
-      { name: 'saucony', description: 'Running de alto rendimiento' },
-      { name: 'merrell', description: 'Calzado para aventuras' },
-      { name: 'hoka one one', description: 'Innovación en running' },
-      { name: 'jordan', description: 'Baloncesto y estilo urbano' },
-      { name: 'salomon', description: 'Equipamiento outdoor' },
-      { name: 'k-swiss', description: 'Tenis y estilo de vida' },
+      { name: 'nike' },
+      { name: 'adidas' },
+      { name: 'puma' },
+      { name: 'reebok' },
+      { name: 'under armour' },
+      { name: 'new balance' },
+      { name: 'asics' },
+      { name: 'fila' },
+      { name: 'converse' },
+      { name: 'vans' },
+      { name: 'skechers' },
+      { name: 'timberland' },
+      { name: 'dc shoes' },
+      { name: 'brooks' },
+      { name: 'saucony' },
+      { name: 'merrell' },
+      { name: 'hoka one one' },
+      { name: 'jordan' },
+      { name: 'salomon' },
+      { name: 'k-swiss' },
     ];
 
     const brands = [];
     for (const brandData of brandsData) {
       const brand = this.brandRepository.create({
         name: brandData.name,
-        description: brandData.description,
-        logo: faker.image.urlLoremFlickr({ category: 'business' }),
       });
       brands.push(await this.brandRepository.save(brand));
     }
@@ -76,26 +74,22 @@ export class SeedService {
 
   private async createCategories() {
     const categoriesData = [
-      { name: 'running', description: 'Calzado para corredores' },
-      { name: 'casual', description: 'Calzado para uso diario' },
-      { name: 'training', description: 'Calzado para entrenamiento' },
-      { name: 'basketball', description: 'Calzado para baloncesto' },
-      { name: 'soccer', description: 'Calzado para fútbol' },
-      { name: 'skateboarding', description: 'Calzado para skateboarding' },
-      {
-        name: 'outdoor',
-        description: 'Calzado para actividades al aire libre',
-      },
-      { name: 'tennis', description: 'Calzado para tenis' },
-      { name: 'lifestyle', description: 'Calzado de moda' },
-      { name: 'walking', description: 'Calzado para caminata' },
+      { name: 'running' },
+      { name: 'casual' },
+      { name: 'training' },
+      { name: 'basketball' },
+      { name: 'soccer' },
+      { name: 'skateboarding' },
+      { name: 'outdoor' },
+      { name: 'tennis' },
+      { name: 'lifestyle' },
+      { name: 'walking' },
     ];
 
     const categories = [];
     for (const categoryData of categoriesData) {
       const category = this.categoryRepository.create({
         name: categoryData.name,
-        description: categoryData.description,
       });
       categories.push(await this.categoryRepository.save(category));
     }

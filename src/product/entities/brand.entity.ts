@@ -1,15 +1,15 @@
+import { IsString } from 'class-validator';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
   BeforeInsert,
   BeforeUpdate,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Product } from './product.entity';
-import { IsString, MinLength } from 'class-validator';
 
 @Entity({ name: 'marcas' })
 export class Brand {
@@ -23,14 +23,7 @@ export class Brand {
     nullable: false,
   })
   @IsString()
-  @MinLength(2)
   name: string;
-
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
-  description: string;
 
   @OneToMany(() => Product, (product) => product.brand, {
     cascade: true,

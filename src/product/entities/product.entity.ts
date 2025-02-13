@@ -24,9 +24,9 @@ export class Product {
     type: 'varchar',
     length: 255,
     nullable: false,
+    unique: true,
   })
   @IsString()
-  @MinLength(3)
   name: string;
 
   @Column({

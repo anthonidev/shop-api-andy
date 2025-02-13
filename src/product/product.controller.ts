@@ -22,6 +22,7 @@ import { FilterProductDto } from './dto/filter-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductService } from './product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('products')
 export class ProductController {
@@ -49,10 +50,10 @@ export class ProductController {
   }
 
   @Get()
-  findAll(
-    @Query() filterProductDto: FilterProductDto,
-    @Query() paginationDto: PaginationDto,
-  ) {
+  @UsePipes(new ValidationPipe({ transform: true }))
+  findAll(@Query() query: Record<string, any>) {
+    const filterProductDto = plainToInstance(FilterProductDto, query);
+    const paginationDto = plainToInstance(PaginationDto, query);
     return this.productService.findAll(filterProductDto, paginationDto);
   }
 
@@ -63,6 +64,7 @@ export class ProductController {
 
   @Put(':id')
   @UseInterceptors(FileInterceptor('photo'))
+  @UsePipes(new ValidationPipe({ transform: true }))
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductDto,

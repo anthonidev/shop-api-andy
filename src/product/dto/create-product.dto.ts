@@ -1,16 +1,17 @@
 import { Transform, Type } from 'class-transformer';
 import {
-  IsString,
   IsNumber,
-  IsPositive,
   IsOptional,
+  IsPositive,
+  IsString,
   MinLength,
 } from 'class-validator';
 
 export class CreateProductDto {
   @IsString()
   @MinLength(3)
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }) => value.toLowerCase().trim())
+  @Type(() => String)
   name: string;
 
   @IsNumber()
@@ -34,4 +35,8 @@ export class CreateProductDto {
   @Transform(({ value }) => (value ? Number(value) : undefined))
   @Type(() => Number)
   brandId?: number;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  isActive?: boolean;
 }

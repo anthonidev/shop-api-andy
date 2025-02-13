@@ -1,11 +1,9 @@
-import { IsOptional, IsString, MinLength } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsString } from 'class-validator';
 
 export class CreateCategoryDto {
   @IsString()
-  @MinLength(3)
+  @Transform(({ value }) => value.toLowerCase().trim())
+  @Type(() => String)
   name: string;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
 }
