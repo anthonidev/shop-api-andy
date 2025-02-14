@@ -12,9 +12,10 @@ export class CategoryService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  async findAll() {
+  async findAll(isActive: boolean) {
+    const where = isActive ? { isActive: true } : {};
     return await this.categoryRepository.find({
-      where: { isActive: true },
+      where,
       order: { name: 'ASC' },
     });
   }

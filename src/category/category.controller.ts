@@ -1,11 +1,12 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Put,
-  Body,
   Param,
   ParseIntPipe,
+  Post,
+  Put,
+  Query,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -16,8 +17,8 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  findAll(@Query('isActive') isActive: boolean) {
+    return this.categoryService.findAll(isActive);
   }
 
   @Post()

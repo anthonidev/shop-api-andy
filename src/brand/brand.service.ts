@@ -12,9 +12,11 @@ export class BrandService {
     private readonly brandRepository: Repository<Brand>,
   ) {}
 
-  async findAll() {
+  async findAll(isActive: boolean) {
+    const where = isActive ? { isActive: true } : {};
+
     return await this.brandRepository.find({
-      where: { isActive: true },
+      where,
       order: { name: 'ASC' },
     });
   }

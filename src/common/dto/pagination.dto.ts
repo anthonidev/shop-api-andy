@@ -14,3 +14,9 @@ export class PaginationDto {
   @Transform(({ value }) => Number(value))
   offset?: number;
 }
+
+export class QueryIsActived {
+  @Type(() => Boolean)
+  @IsOptional()
+  isActive?: boolean;
+}

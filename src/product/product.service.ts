@@ -53,7 +53,7 @@ export class ProductService {
     filterProductDto: FilterProductDto,
     paginationDto: PaginationDto,
   ) {
-    const { limit = 10, offset = 0 } = paginationDto;
+    const { limit = 30, offset = 0 } = paginationDto;
     const { name, categoryId, brandId, minPrice, maxPrice, isActive } =
       filterProductDto;
 
